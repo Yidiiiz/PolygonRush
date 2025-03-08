@@ -50,7 +50,6 @@ public class Player extends Polygon {
 					// If player fell from above the element, player is placed on top of it
 					if (this.position.y + yVel <= ((Polygon) e).position.y - 30 + gravity) {
 						super.position.y = ((Polygon) e).position.y - 30 - yVel;
-						break;
 						
 					// Otherwise, if the player is colliding the block from the side, player dies
 					} else if (newCollide != (Polygon) e && this.position.x + 30 < ((Polygon) e).position.x + 3) {

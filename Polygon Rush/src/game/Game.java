@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 abstract class Game extends Canvas {
+  private static final long serialVersionUID = 0;
   protected boolean on = true;
   protected int width, height;
   protected Image buffer;

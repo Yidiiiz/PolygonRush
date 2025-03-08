@@ -44,7 +44,6 @@ class Polygon {
 		Point center = findCenter();
 		Point[] points = new Point[shape.length];
 		for (int i = 0; i < shape.length; i++) {
-//    	for (Point p : shape) {
 			Point p = shape[i];
 			double x = ((p.x-center.x) * Math.cos(Math.toRadians(rotation)))
 					- ((p.y-center.y) * Math.sin(Math.toRadians(rotation)))
@@ -102,6 +101,7 @@ class Polygon {
     	return new Point(Math.abs(sum.x/(6*area)),Math.abs(sum.y/(6*area)));
   	}
 	
+  	// Checks if current Polygon collides with polygon provided
 	public boolean collides(Polygon other) {
 		for (Point p : this.getPoints()) {
 			if (other.contains(p)) {

@@ -5,6 +5,9 @@ import java.awt.event.*;
 
 // Main class, runs the game
 class PolygonRush extends Game implements KeyListener {
+	// Serial version use id
+	private static final long serialVersionUID = 1;
+
 	// Speed which map scrolls
 	private static int mapSpeed = 3;
 	

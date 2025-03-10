@@ -19,10 +19,10 @@ NOTE: You don't need to worry about the "magic math" details.
 
 class Polygon {
 
-	public Point[] shape; // An array of points.
-	public Point position; // The offset mentioned above.
+	private Point[] shape; // An array of points.
+	private Point position; // The offset mentioned above.
 
-	public double rotation; // Zero degrees is due east.
+	private double rotation; // Zero degrees is due east.
 
 	public Polygon(Point[] inShape, Point inPosition, double inRotation) {
 		shape = inShape;
@@ -129,5 +129,31 @@ class Polygon {
 			}
 		}
 		return false;
+	}
+	
+	// Getter for shape
+	public Point[] getShape() {
+		Point[] returnMe = new Point[shape.length];
+		
+		for (int i = 0; i < shape.length; i++) {
+			returnMe[i] = shape[i].clone();
+		}
+		
+		return returnMe;
+	}
+	
+	// Getter for position
+	public Point getPosition() {
+		return position.clone();
+	}
+	
+	// Getter for rotation
+	public double getRotation() {
+		return rotation;
+	}
+	
+	// Setter for rotation
+	public void setRotation(double rotation) {
+		this.rotation = rotation;
 	}
 }

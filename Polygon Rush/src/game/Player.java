@@ -65,8 +65,8 @@ public class Player extends Polygon {
 		}
 		
 		// Moves the player based on current player velocity
-		super.position.y -= yVel;
-		super.position.x += xVel;
+		super.getPosition().y -= yVel;
+		super.getPosition().x += xVel;
 
 		// Gets the map element which the player collides with, null if none
 		ArrayList<MapElement> collisions = collidesMap(m);
@@ -82,28 +82,28 @@ public class Player extends Polygon {
 					if (super.collides(p)) {
 						if (e instanceof Triangle) {
 							// Allow the player to land on the triangle, but not die
-							if (this.position.y + yVel <= e.position.y - 30 + gravity) {
-								super.position.y = e.position.y - 30 - yVel;
+							if (this.getPosition().y + yVel <= e.getPosition().y - 30 + gravity) {
+								super.getPosition().y = e.getPosition().y - 30 - yVel;
 								yVel = 0;
 								canJump = true; // Allow jumping from the triangle
 							}
 						} else if (super.collides(e)) { // Regular platform (square)
 							// If player fell from above the element, player is placed on top of it
-							if (this.position.y + yVel <= e.position.y - 30 + gravity) {
-								super.position.y = e.position.y - 30 - yVel;
+							if (this.getPosition().y + yVel <= e.getPosition().y - 30 + gravity) {
+								super.getPosition().y = e.getPosition().y - 30 - yVel;
 								canJump = true;
 								// Otherwise, if the player is colliding the block from the side, player dies
-							} else if (this.position.x + 30 < e.position.x + 10) {
+							} else if (this.getPosition().x + 30 < e.getPosition().x + 10) {
 								isAlive = false; // Kill the player
 							}
 						}
 						
 						// If player fell from above the element, player is placed on top of it
-						if (!e.resetPlayer && this.position.y + yVel <= p.position.y - 30 + gravity) {
-							super.position.y = p.position.y - 30 - yVel;
+						if (!e.getResetPlayer() && this.getPosition().y + yVel <= p.getPosition().y - 30 + gravity) {
+							super.getPosition().y = p.getPosition().y - 30 - yVel;
 							
 						// Otherwise, if the player is colliding the block from the side, player dies
-						} else if (e.resetPlayer || (newCollide != p && this.position.x + 30 <= p.position.x + mapSpeed)) {
+						} else if (e.getResetPlayer() || (newCollide != p && this.getPosition().x + 30 <= p.getPosition().x + mapSpeed)) {
 							newCollide = p;
 							isAlive = false;
 						}
@@ -112,13 +112,13 @@ public class Player extends Polygon {
 				
 			// If player is colliding the floor
 			} else {
-				super.position.y = floor.position.y - 30 - yVel;
+				super.getPosition().y = floor.getPosition().y - 30 - yVel;
 				newCollide = floor;
 			}
 
 			// Since player is inside of something, movement is undone
-			super.position.y += yVel;
-			super.position.x -= xVel;
+			super.getPosition().y += yVel;
+			super.getPosition().x -= xVel;
 
 			// Resets velocity because of collision
 			yVel = 0;
@@ -127,7 +127,7 @@ public class Player extends Polygon {
 			canJump = true;
 
 			// Resets player rotation
-			super.rotation = 0;
+			super.setRotation(0);
 
 			// If nothing collided
 		} else {
@@ -137,7 +137,7 @@ public class Player extends Polygon {
 			// If player is currently jumping, player rotates at a speed relative to jump
 			// power and gravity
 			if (!canJump) {
-				super.rotation += 270 / Math.abs((jumpPower) / gravity) / 3;
+				super.setRotation(super.getRotation() + 270 / Math.abs((jumpPower) / gravity) / 3);
 			}
 		}
 
@@ -147,7 +147,7 @@ public class Player extends Polygon {
 	public ArrayList<MapElement> collidesMap(Map m) {
 		// Checks through each element of the map
 		ArrayList<MapElement> returnMe = new ArrayList<MapElement>();
-		for (Polygon p : m.mapArray) {
+		for (Polygon p : m.getMap()) {
 			// If player collides with element, return the element
 			if (super.collides(p)) {
 				returnMe.add((MapElement) p);

@@ -12,16 +12,10 @@ class PolygonRush extends Game implements KeyListener {
 	// Total amount map scrolled
 	private static int scrolled = 0;
 	
-	// Is jump currently pressed
-	public boolean jumpPressed = false;
-	
-	// Frame counter
-	static int frame = 0;
-
 	// Variables for player, floor, and map
-	public Player player;
-	public Polygon floor;
-	public Map map;
+	private Player player;
+	private Polygon floor;
+	private Map map;
 
 	// Speed which map scrolls
 	private static int mapSpeed = 5;
@@ -70,7 +64,7 @@ class PolygonRush extends Game implements KeyListener {
 
 	private void addObstacle(MapElement element) {
 		map.addElement(element);
-		initialObstaclePositions.add(new Point(element.position.x, element.position.y));
+		initialObstaclePositions.add(new Point(element.getPosition().x, element.getPosition().y));
 	}
 
 	private void showMenu(Graphics brush) {
@@ -145,18 +139,18 @@ class PolygonRush extends Game implements KeyListener {
 				loadLevel(selectedLevel);
 				
 //	    		double moveAmount = width - map.mapArray.get(0).position.x;
-	    		for (MapElement e : map.mapArray) {
+	    		for (MapElement e : map.getMap()) {
 	    			Polygon p = (Polygon) e;
-	        		p.position.x += scrolled;
+	        		p.getPosition().x += scrolled;
 	        	}
 	    		scrolled = 0;
 	    	}
 
 	    	// Draws all map elements
 	    	brush.setColor(Color.darkGray);
-	    	for (MapElement e : map.mapArray) {
+	    	for (MapElement e : map.getMap()) {
 	    		Polygon p = (MapElement) e;
-	    		p.position.x -= mapSpeed;
+	    		p.getPosition().x -= mapSpeed;
 	    		
 	    		// If map element is out of view to the left, it respawn's on the right (probably will not keep)
 //	    		if (p.position.x <= -30) {
@@ -223,11 +217,11 @@ class PolygonRush extends Game implements KeyListener {
 
 	private void loadLevel(int level) {
 		// Clear the current map
-		map.mapArray.clear();
+		map.getMap().clear();
 		Level currentLevel = new Level(level);
 		
 		// Add elements for the new level
-		map.mapArray.addAll(currentLevel.getLevelMapElements());
+		map.getMap().addAll(currentLevel.getLevelMapElements());
 		if (level == 1) {
 			// Stop any existing music
 			music.stopBackgroundMusic();
@@ -249,15 +243,13 @@ class PolygonRush extends Game implements KeyListener {
 	public class Level {
 		private int levelNumber;
 		private ArrayList<MapElement> levelMapElements;
-		private Music music;
 
 		public Level(int levelNumber) {
 			this.levelNumber = levelNumber;
 			levelMapElements = new ArrayList<>();
-			this.music = new Music();
+			music = new Music();
 
 			loadLevelElements();
-
 		}
 
 		// Load level specific map elements

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 // Map class, stores all map elements for the map
 public class Map {
 	// Array List for all map elements
-	public ArrayList<MapElement> mapArray;
+	private ArrayList<MapElement> mapArray;
 
 	// Constructor for map, initializes mapArray
 	public Map() {
@@ -16,5 +16,8 @@ public class Map {
 	public void addElement(MapElement e) {
 		mapArray.add(e);
 	}
-
+	
+	public ArrayList<MapElement> getMap() {
+		return new ArrayList<MapElement> (mapArray);
+	}
 }

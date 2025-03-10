@@ -10,7 +10,6 @@ public class Map {
 	// Constructor for map, initializes mapArray
 	public Map() {
 		mapArray = new ArrayList<MapElement>();
-
 	}
 
 	// Adds a map element to the map

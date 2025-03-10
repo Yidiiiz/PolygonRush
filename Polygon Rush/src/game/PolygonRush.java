@@ -24,7 +24,7 @@ class PolygonRush extends Game implements KeyListener {
 	public Map map;
 
 	// Speed which map scrolls
-	private static int mapSpeed = 10;
+	private static int mapSpeed = 5;
 
 	private int selectedLevel = 1;
 
@@ -221,6 +221,7 @@ class PolygonRush extends Game implements KeyListener {
 		// Clear the current map
 		map.mapArray.clear();
 		Level currentLevel = new Level(level);
+		
 		// Add elements for the new level
 		map.mapArray.addAll(currentLevel.getLevelMapElements());
 		if (level == 1) {
@@ -317,48 +318,43 @@ class PolygonRush extends Game implements KeyListener {
 		loadLevel(selectedLevel);
 	}
 	// Get keyPressed for Color, Level, and Start/Enter
-		public void keyPressed(KeyEvent e) {
-			if (e.getKeyChar() == KeyEvent.VK_SPACE) {
-				player.jump(true);
+	public void keyPressed(KeyEvent e) {
+		if (isInMenu) {
+			if (e.getKeyCode() == KeyEvent.VK_C) {
+				// Lambda expression to handle the color change
+				Runnable changeColorAction = () -> {
+					selectedColorIndex = (selectedColorIndex + 1) % playerColors.length;
+				};
+
+				changeColorAction.run();
+
+			} else if (e.getKeyCode() == KeyEvent.VK_L) {
+				// Anonymous class for loading new level (more complex action)
+				Runnable loadLevelAction = new Runnable() {
+					public void run() {
+						selectedLevel = (selectedLevel % 3) + 1;
+						loadLevel(selectedLevel);
+					}
+				};
+				loadLevelAction.run();
+
+			} else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				// Start the game using a lambda expression
+				Runnable startGameAction = () -> startGame(selectedColorIndex);
+				startGameAction.run();
 			}
-			if (isInMenu) {
-				if (e.getKeyCode() == KeyEvent.VK_C) {
-					// Lambda expression to handle the color change
-					Runnable changeColorAction = () -> {
-						selectedColorIndex = (selectedColorIndex + 1) % playerColors.length;
-					};
-
-					changeColorAction.run();
-
-				} else if (e.getKeyCode() == KeyEvent.VK_L) {
-					// Anonymous class for loading new level (more complex action)
-					Runnable loadLevelAction = new Runnable() {
-						public void run() {
-							selectedLevel = (selectedLevel % 3) + 1;
-							loadLevel(selectedLevel);
-						}
-					};
-					loadLevelAction.run();
-
-				} else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					// Start the game using a lambda expression
-					Runnable startGameAction = () -> startGame(selectedColorIndex);
-					startGameAction.run();
-				}
-			} else {
-				// Use anonymous class for other actions (jump or other keys)
-				if (e.getKeyChar() == KeyEvent.VK_SPACE || e.getKeyChar() == KeyEvent.VK_W
-						|| e.getKeyChar() == KeyEvent.VK_UP) {
-					Runnable jumpAction = new Runnable() {
-						public void run() {
-							player.jump();
-						}
-					};
-					jumpAction.run();
-				}
-
+		} else {
+			// Use anonymous class for other actions (jump or other keys)
+			if (e.getKeyChar() == KeyEvent.VK_SPACE) {
+				Runnable jumpStart = new Runnable() {
+					public void run() {
+						player.jump(true);
+					}
+				};
+				jumpStart.run();
 			}
 		}
+	}
 
 	// On key typed event (required by keyListener)
 	public void keyTyped(KeyEvent e) {
@@ -367,11 +363,13 @@ class PolygonRush extends Game implements KeyListener {
 
 	// On key released event (required by keyListener)
 	public void keyReleased(KeyEvent e) {
-
 		if (e.getKeyChar() == KeyEvent.VK_SPACE) {
-			player.jump(false);
+			Runnable jumpStop = new Runnable() {
+				public void run() {
+					player.jump(false);
+				}
+			};
+			jumpStop.run();
 		}
-
 	}
-
 }

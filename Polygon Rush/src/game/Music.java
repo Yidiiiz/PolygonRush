@@ -41,7 +41,7 @@ public class Music {
 	}
 
 	public void playLevelOneMusic() {
-		playMusic("resources/music/Level_one.wav");
+		playMusic("resources/music/Level_One.wav");
 	}
 
 	// Play the music for Level 2

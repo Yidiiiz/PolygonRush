@@ -8,9 +8,6 @@ import java.util.ArrayList;
 class PolygonRush extends Game implements KeyListener {
 	// Serial version use id
 	private static final long serialVersionUID = 1;
-
-
-
 	
 	// Total amount map scrolled
 	private static int scrolled = 0;
@@ -20,16 +17,14 @@ class PolygonRush extends Game implements KeyListener {
 	
 	// Frame counter
 	static int frame = 0;
-	
 
 	// Variables for player, floor, and map
 	public Player player;
 	public Polygon floor;
-<<<<<<< HEAD
-	public Map m;
+	public Map map;
 
 	// Speed which map scrolls
-	private static int mapSpeed = 3;
+	private static int mapSpeed = 10;
 
 	private int selectedLevel = 1;
 
@@ -43,15 +38,6 @@ class PolygonRush extends Game implements KeyListener {
 	private ArrayList<Point> initialObstaclePositions = new ArrayList<>();
 	private AttemptTracker attemptTracker = new AttemptTracker();
 
-	public static void main(String[] args) {
-		PolygonRush a = new PolygonRush();
-		a.repaint();
-	}
-
-=======
-	public Map map;
-	
->>>>>>> 2d15afea3ee6c51f3749fd6fbc73e62d9688b295
 	// Constructor for game, creates the game and initializes objects
 	public PolygonRush() {
 		// Creating the game
@@ -60,7 +46,7 @@ class PolygonRush extends Game implements KeyListener {
 		this.requestFocus();
 
 		music = new Music();
-		this.m = new Map();
+		map = new Map();
 		loadLevel(selectedLevel);
 
 		// Creates a key listener to detect key presses
@@ -72,15 +58,14 @@ class PolygonRush extends Game implements KeyListener {
 		player = new Player(playerShape, playerPosition, 0);
 
 		// Creates and initializes the floor
-		Point[] floorShape = new Point[] { new Point(0, 0), new Point(0, 100), new Point(width, 100),
-				new Point(width, 0) };
+		Point[] floorShape = new Point[] { new Point(0, 0), new Point(0, 100), new Point(width, 100), new Point(width, 0) };
 		Point floorPosition = new Point(0, height - 100);
 		floor = new Polygon(floorShape, floorPosition, 0);
 
 	}
 
 	private void addObstacle(MapElement element) {
-		m.addElement(element);
+		map.addElement(element);
 		initialObstaclePositions.add(new Point(element.position.x, element.position.y));
 	}
 
@@ -124,116 +109,67 @@ class PolygonRush extends Game implements KeyListener {
 
 	// Paint method, runs each frame and draws all objects and UI
 	public void paint(Graphics brush) {
-
 		// Show the menu
 		if (isInMenu) {
 			showMenu(brush);
 		} else {
 			// Creating the background of the game
-			brush.setColor(Color.white);
-			brush.fillRect(0, 0, width, height);
-
-			// Set brush color to black
-			brush.setColor(Color.black);
-
-			// Draw floor
-			int[][] xy = getXY(floor.getPoints());
-			brush.fillPolygon(xy[0], xy[1], xy[0].length);
-			// Set player color
+	    	brush.setColor(Color.white);
+	    	brush.fillRect(0,0,width,height);
+	    	     	    	
+	    	// Draw floor
+	    	brush.setColor(Color.darkGray);
+	    	int[][] xy = getXY(floor.getPoints());
+	    	brush.fillPolygon(xy[0], xy[1], xy[0].length);
+	    	
+	    	// Draw player
 			brush.setColor(player.getColor());
+	    	xy = getXY(player.getPoints());
+	    	brush.fillPolygon(xy[0], xy[1], xy[0].length);
+	    	player.move(floor, map, mapSpeed);
 
-			// Draw player
-			xy = getXY(player.getPoints());
-			brush.fillPolygon(xy[0], xy[1], xy[0].length);
-			player.move(floor, m, mapSpeed);
-
-			brush.setColor(Color.black);
+	    	brush.setColor(Color.black);
 			attemptTracker.drawAttempts(brush);
+			
 
-			// On player death, reset player and map
-			if (!player.isAlive) {
-				player.isAlive = true;
-				player.newCollide = null;
-				attemptTracker.incrementAttempts();
+	    	// On player death, reset player and map
+	    	if (!player.isAlive) {
+	    		player.isAlive = true;
+	    		player.newCollide = null;
+	    		attemptTracker.incrementAttempts();
 				// music.stopBackgroundMusic(); // Stop the current music
 				loadLevel(selectedLevel);
+				
+	    		double moveAmount = width - map.mapArray.get(0).position.x;
+	    		for (MapElement e : map.mapArray) {
+	    			Polygon p = (Polygon) e;
+	        		p.position.x += moveAmount;
+	        	}
+	    		scrolled = 0;
+	    	}
 
-			}
-
-			// Draws all map elements
-			for (MapElement e : m.mapArray) {
-				Polygon p = (Polygon) e;
-				p.position.x -= mapSpeed;
-
-				// If map element is out of view to the left, it respawn's on the right
-				// (probably will not keep)
-//					if (p.position.x <= -30) {
-//						p.position.x = width;
-//					}
-
-				// Draws current map element
-				xy = getXY(p.getPoints());
-				brush.fillPolygon(xy[0], xy[1], xy[0].length);
-			}
-
+	    	// Draws all map elements
+	    	brush.setColor(Color.darkGray);
+	    	for (MapElement e : map.mapArray) {
+	    		Polygon p = (MapElement) e;
+	    		p.position.x -= mapSpeed;
+	    		
+	    		// If map element is out of view to the left, it respawn's on the right (probably will not keep)
+//	    		if (p.position.x <= -30) {
+//	    			p.position.x = width;
+//	    		}
+	    		
+	    		// Draws current map element
+	        	xy = getXY(p.getPoints());
+	        	brush.fillPolygon(xy[0], xy[1], xy[0].length);
+	    	}
+			scrolled += mapSpeed;
 		}
-
-		// Creating the background of the game
-    	brush.setColor(Color.white);
-    	brush.fillRect(0,0,width,height);
-    	     	    	
-    	// Draw floor
-    	brush.setColor(Color.darkGray);
-    	int[][] xy = getXY(floor.getPoints());
-    	brush.fillPolygon(xy[0], xy[1], xy[0].length);
-    	
-    	// Draw player
-    	brush.setColor(Color.black);
-    	xy = getXY(player.getPoints());
-    	brush.fillPolygon(xy[0], xy[1], xy[0].length);
-    	player.move(floor, map, mapSpeed);
-
-    	// On player death, reset player and map
-    	if (!player.isAlive) {
-    		player.isAlive = true;
-    		player.newCollide = null;
-    		
-    		double moveAmount = width - map.mapArray.get(0).position.x;
-    		for (MapElement e : map.mapArray) {
-    			Polygon p = (Polygon) e;
-        		p.position.x += moveAmount;
-        	}
-    		scrolled = 0;
-    	}
-
-<<<<<<< HEAD
-
-=======
-    	// Draws all map elements
-    	brush.setColor(Color.darkGray);
-    	for (MapElement e : map.mapArray) {
-    		Polygon p = (MapElement) e;
-    		p.position.x -= mapSpeed;
-    		
-    		// If map element is out of view to the left, it respawn's on the right (probably will not keep)
-    		if (p.position.x <= -30) {
-    			p.position.x = width;
-    		}
-    		
-    		// Draws current map element
-        	xy = getXY(p.getPoints());
-        	brush.fillPolygon(xy[0], xy[1], xy[0].length);
-    	}
-		scrolled += mapSpeed;
-    	
-    	//  GIVEN CODE, WAS ALWAYS HERE (probably won't keep)
-    	// sample code for printing message for debugging
-    	// counter is incremented and this message printed
-    	// each time the canvas is repainted
-    	frame++;
-    	brush.setColor(Color.black);
-    	brush.drawString("Counter is " + frame,10,10);
->>>>>>> 2d15afea3ee6c51f3749fd6fbc73e62d9688b295
+	}
+	
+	public static void main(String[] args) {
+		PolygonRush a = new PolygonRush();
+		a.repaint();
 	}
 
 	// Starts game
@@ -281,62 +217,12 @@ class PolygonRush extends Game implements KeyListener {
 		return returnMe;
 	}
 
-
-	// Get keyPressed for Color, Level, and Start/Enter
-	public void keyPressed(KeyEvent e) {
-		if (isInMenu) {
-			if (e.getKeyCode() == KeyEvent.VK_C) {
-				// Lambda expression to handle the color change
-				Runnable changeColorAction = () -> {
-					selectedColorIndex = (selectedColorIndex + 1) % playerColors.length;
-				};
-
-				changeColorAction.run();
-
-			} else if (e.getKeyCode() == KeyEvent.VK_L) {
-				// Anonymous class for loading new level (more complex action)
-				Runnable loadLevelAction = new Runnable() {
-					public void run() {
-						selectedLevel = (selectedLevel % 3) + 1;
-						loadLevel(selectedLevel);
-					}
-				};
-				loadLevelAction.run();
-
-			} else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-				// Start the game using a lambda expression
-				Runnable startGameAction = () -> startGame(selectedColorIndex);
-				startGameAction.run();
-			}
-		} else {
-			// Use anonymous class for other actions (jump or other keys)
-			if (e.getKeyChar() == KeyEvent.VK_SPACE || e.getKeyChar() == KeyEvent.VK_W
-					|| e.getKeyChar() == KeyEvent.VK_UP) {
-				Runnable jumpAction = new Runnable() {
-					public void run() {
-						player.jump(floor);
-					}
-				};
-				jumpAction.run();
-			}
-
-		}
-	}
-
-//	// On key pressed event (required by keyListener)
-//	public void keyPressed(KeyEvent e) {
-//		if (e.getKeyChar() == KeyEvent.VK_SPACE) {
-//			player.jump(true);
-//>>>>>>> 99b1f8c09ed8d89c8db78974df5bb3c7783d66b6
-//		}
-//	}
-
 	private void loadLevel(int level) {
 		// Clear the current map
-		m.mapArray.clear();
+		map.mapArray.clear();
 		Level currentLevel = new Level(level);
 		// Add elements for the new level
-		m.mapArray.addAll(currentLevel.getLevelMapElements());
+		map.mapArray.addAll(currentLevel.getLevelMapElements());
 		if (level == 1) {
 			// Stop any existing music
 			music.stopBackgroundMusic();
@@ -430,6 +316,49 @@ class PolygonRush extends Game implements KeyListener {
 		selectedLevel = (selectedLevel % 3) + 1;
 		loadLevel(selectedLevel);
 	}
+	// Get keyPressed for Color, Level, and Start/Enter
+		public void keyPressed(KeyEvent e) {
+			if (e.getKeyChar() == KeyEvent.VK_SPACE) {
+				player.jump(true);
+			}
+			if (isInMenu) {
+				if (e.getKeyCode() == KeyEvent.VK_C) {
+					// Lambda expression to handle the color change
+					Runnable changeColorAction = () -> {
+						selectedColorIndex = (selectedColorIndex + 1) % playerColors.length;
+					};
+
+					changeColorAction.run();
+
+				} else if (e.getKeyCode() == KeyEvent.VK_L) {
+					// Anonymous class for loading new level (more complex action)
+					Runnable loadLevelAction = new Runnable() {
+						public void run() {
+							selectedLevel = (selectedLevel % 3) + 1;
+							loadLevel(selectedLevel);
+						}
+					};
+					loadLevelAction.run();
+
+				} else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					// Start the game using a lambda expression
+					Runnable startGameAction = () -> startGame(selectedColorIndex);
+					startGameAction.run();
+				}
+			} else {
+				// Use anonymous class for other actions (jump or other keys)
+				if (e.getKeyChar() == KeyEvent.VK_SPACE || e.getKeyChar() == KeyEvent.VK_W
+						|| e.getKeyChar() == KeyEvent.VK_UP) {
+					Runnable jumpAction = new Runnable() {
+						public void run() {
+							player.jump();
+						}
+					};
+					jumpAction.run();
+				}
+
+			}
+		}
 
 	// On key typed event (required by keyListener)
 	public void keyTyped(KeyEvent e) {

@@ -44,11 +44,13 @@ class PolygonRush extends Game implements KeyListener {
    		
 	    // Creates and initializes the map
    		m = new Map();
-   		m.addElement(new Platform(30, new Point(width, height - 100 - 30), 0, Color.black));
-   		m.addElement(new Platform(30, new Point(width+120, height - 100 - 30*2), 0, Color.black));
-   		m.addElement(new Platform(30, new Point(width+120*2, height - 100 - 30*3), 0, Color.black));
-   		
-   		for (int i = 0; i < 12; i++) {
+//   		m.addElement(new Platform(30, new Point(width, height - 100 - 30), 0, Color.black));
+//   		m.addElement(new Platform(30, new Point(width+120, height - 100 - 30*2), 0, Color.black));
+//   		m.addElement(new Platform(30, new Point(width+120*2, height - 100 - 30*3), 0, Color.black));
+   		for (int i = 0; i < 9; i++) {
+   	   		m.addElement(new Platform(30, new Point(width+120*i, height - 100 - 30*(i+1)), 0, Color.black));
+   		}
+   		for (int i = 0; i < 24; i++) {
    	   		m.addElement(new Spike(30, new Point(width+30*i, height - 100 - 30), 0, Color.black));
    		}
 

@@ -128,14 +128,15 @@ public class Player extends Polygon {
 			if (collisions != null) {
 				for (MapElement e : collisions) {
 					// If element is collided
-					if (super.collides((Polygon) e)) {
+					Polygon p = (Polygon) e;
+					if (super.collides(p)) {
 						// If player fell from above the element, player is placed on top of it
-						if (!e.resetPlayer && this.position.y + yVel <= ((Polygon) e).position.y - 30 + gravity) {
-							super.position.y = ((Polygon) e).position.y - 30 - yVel;
+						if (!e.resetPlayer && this.position.y + yVel <= p.position.y - 30 + gravity) {
+							super.position.y = p.position.y - 30 - yVel;
 							
 						// Otherwise, if the player is colliding the block from the side, player dies
-						} else if (e.resetPlayer || (newCollide != (Polygon) e && this.position.x + 30 <= ((Polygon) e).position.x + mapSpeed)) {
-							newCollide = (Polygon) e;
+						} else if (e.resetPlayer || (newCollide != p && this.position.x + 30 <= p.position.x + mapSpeed)) {
+							newCollide = p;
 							isAlive = false;
 						}
 					}
@@ -185,10 +186,10 @@ public class Player extends Polygon {
 >>>>>>> 99b1f8c09ed8d89c8db78974df5bb3c7783d66b6
 		// Checks through each element of the map
 		ArrayList<MapElement> returnMe = new ArrayList<MapElement>();
-		for (MapElement e : m.mapArray) {
+		for (Polygon p : m.mapArray) {
 			// If player collides with element, return the element
-			if (super.collides((Polygon) e)) {
-				returnMe.add(e);
+			if (super.collides(p)) {
+				returnMe.add((MapElement) p);
 			}
 		}
 <<<<<<< HEAD

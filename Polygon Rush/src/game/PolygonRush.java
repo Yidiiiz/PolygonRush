@@ -26,11 +26,14 @@ class PolygonRush extends Game implements KeyListener {
 	// Speed which map scrolls
 	private static int mapSpeed = 5;
 
+	// Selected Level and music
 	private int selectedLevel = 1;
-
 	private Music music;
 
+	// Is currently in menu or not
 	private boolean isInMenu = true;
+	
+	// Color array and index
 	private int selectedColorIndex = 0;
 	private Color[] playerColors = { Color.BLACK, Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW };
 
@@ -45,6 +48,7 @@ class PolygonRush extends Game implements KeyListener {
 		this.setFocusable(true);
 		this.requestFocus();
 
+		// Creates music, map, and loads the current level
 		music = new Music();
 		map = new Map();
 		loadLevel(selectedLevel);
@@ -140,10 +144,10 @@ class PolygonRush extends Game implements KeyListener {
 				// music.stopBackgroundMusic(); // Stop the current music
 				loadLevel(selectedLevel);
 				
-	    		double moveAmount = width - map.mapArray.get(0).position.x;
+//	    		double moveAmount = width - map.mapArray.get(0).position.x;
 	    		for (MapElement e : map.mapArray) {
 	    			Polygon p = (Polygon) e;
-	        		p.position.x += moveAmount;
+	        		p.position.x += scrolled;
 	        	}
 	    		scrolled = 0;
 	    	}

@@ -268,6 +268,7 @@ class PolygonRush extends Game implements KeyListener {
 		// Load level specific map elements
 		private void loadLevelElements() {
 			if (levelNumber == 1) {
+				
 				addObstacle(new Platform(30, new Point(width - 500, height - 100 - 30), 0, Color.black));
 				addObstacle(new Triangle(30, new Point(width - 100, height - 100 - 30), Color.black));
 				addObstacle(new Triangle(30, new Point(width - 125, height - 100 - 30), Color.black));
@@ -291,6 +292,7 @@ class PolygonRush extends Game implements KeyListener {
 				addObstacle(new Platform(30, new Point(width + 1500, height - 100 - 150), 0, Color.black));
 				addObstacle(new Platform(30, new Point(width + 2000, height - 100 - 30), 0, Color.black));
 			} else if (levelNumber == 2) {
+				
 				addObstacle(new Platform(30, new Point(width, height - 100 - 30), 0, Color.black));
 				addObstacle(new Platform(30, new Point(width + 200, height - 100 - 75), 0, Color.black));
 				addObstacle(new Platform(30, new Point(width + 600, height - 100 - 30), 0, Color.black));
@@ -299,6 +301,7 @@ class PolygonRush extends Game implements KeyListener {
 				addObstacle(new Platform(30, new Point(width + 1200, height - 100 - 30), 0, Color.black));
 				addObstacle(new Platform(30, new Point(width + 1200, height - 100 - 200), 0, Color.black));
 			} else if (levelNumber == 3) {
+				
 				addObstacle(new Triangle(30, new Point(width + 500, height - 100 - 60), Color.black));
 				addObstacle(new Triangle(30, new Point(width + 525, height - 100 - 60), Color.black));
 				addObstacle(new Triangle(30, new Point(width + 550, height - 100 - 60), Color.black));

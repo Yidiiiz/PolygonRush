@@ -6,77 +6,54 @@ import java.io.IOException;
 
 public class Music {
 
-    private Clip backgroundMusicClip; 
-    
+	private Clip backgroundMusicClip;
 
-    // Constructor for Music class
-    public Music() {
-        backgroundMusicClip = null;
-    }
+	// Constructor for Music class
+	public Music() {
+		backgroundMusicClip = null;
+	}
 
-    
-    private void playMusic(String trackFilePath) {
-        try {
-            if (backgroundMusicClip != null) {
-            	 // Stop any currently playing music
-                stopBackgroundMusic(); 
-            }
-            
-            // Load the audio file and open it into the clip
-            File musicFile = new File(trackFilePath);
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(musicFile);
-            backgroundMusicClip = AudioSystem.getClip();
-            backgroundMusicClip.open(audioStream);
+	private void playMusic(String trackFilePath) {
+		try {
+			if (backgroundMusicClip != null) {
+				// Stop any currently playing music
+				stopBackgroundMusic();
+			}
 
-            // Start playing the clip in a loop
-            backgroundMusicClip.loop(Clip.LOOP_CONTINUOUSLY);
+			// Load the audio file and open it into the clip
+			File musicFile = new File(trackFilePath);
+			AudioInputStream audioStream = AudioSystem.getAudioInputStream(musicFile);
+			backgroundMusicClip = AudioSystem.getClip();
+			backgroundMusicClip.open(audioStream);
 
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            System.err.println("Error playing background music: " + e.getMessage());
-        }
-    }
-    
-    
-    public void stopBackgroundMusic() {
-        if (backgroundMusicClip != null) {
-            backgroundMusicClip.stop();  
-        }
-    }
+			// Start playing the clip in a loop
+			backgroundMusicClip.loop(Clip.LOOP_CONTINUOUSLY);
 
-    public void playLevelOneMusic() {
-        playMusic("resources/music/Level_one.wav");
-    }
+		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+			System.err.println("Error playing background music: " + e.getMessage());
+		}
+	}
 
-    // Play the music for Level 2
-    public void playLevelTwoMusic() {
-        playMusic("resources/music/Level_Two.wav");
-    }
+	public void stopBackgroundMusic() {
+		if (backgroundMusicClip != null) {
+			backgroundMusicClip.stop();
+		}
+	}
 
-    // Play the music for Level 3
-    public void playLevelThreeMusic() {
-        playMusic("resources/music/Level_Three.wav");
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+	public void playLevelOneMusic() {
+		playMusic("resources/music/Level_one.wav");
+	}
+
+	// Play the music for Level 2
+	public void playLevelTwoMusic() {
+		playMusic("resources/music/Level_Two.wav");
+	}
+
+	// Play the music for Level 3
+	public void playLevelThreeMusic() {
+		playMusic("resources/music/Level_Three.wav");
+	}
+
 //    public void playBackgroundMusic(String musicFilePath) {
 //        try {
 //            // Stop any previously playing music before starting a new one
@@ -100,11 +77,7 @@ public class Music {
 //            backgroundMusicClip.stop();
 //        }
 //    }
-    
-    
-    
-    
-    
+
 //    // Play background music
 //    public void playBackgroundMusic(String filePath) {
 //        try {
@@ -135,7 +108,4 @@ public class Music {
 //        
 //    }
 
-   
-
-    
 }

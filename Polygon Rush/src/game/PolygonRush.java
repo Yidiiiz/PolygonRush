@@ -9,7 +9,10 @@ class PolygonRush extends Game implements KeyListener {
 	private static final long serialVersionUID = 1;
 
 	// Speed which map scrolls
-	private static int mapSpeed = 3;
+	private static int mapSpeed = 5;
+	
+	// Is jump currently pressed
+	public boolean jumpPressed = false;
 	
 	// Time counter (given at start)
 	static int counter = 0;
@@ -42,6 +45,16 @@ class PolygonRush extends Game implements KeyListener {
 	    // Creates and initializes the map
    		m = new Map();
    		m.addElement(new Platform(30, new Point(width, height - 100 - 30), 0, Color.black));
+   		m.addElement(new Platform(30, new Point(width+120, height - 100 - 30*2), 0, Color.black));
+   		m.addElement(new Platform(30, new Point(width+120*2, height - 100 - 30*3), 0, Color.black));
+   		
+   		for (int i = 0; i < 12; i++) {
+   	   		m.addElement(new Spike(30, new Point(width+30*i, height - 100 - 30), 0, Color.black));
+   		}
+
+   		
+   		// Starts the game (the paint function)
+   		repaint();
 	}
 
 	// Paint method, runs each frame and draws all objects and UI
@@ -49,26 +62,28 @@ class PolygonRush extends Game implements KeyListener {
 		// Creating the background of the game
     	brush.setColor(Color.white);
     	brush.fillRect(0,0,width,height);
-    	
-    	// Set brush color to black
-    	brush.setColor(Color.black);
-    	    	
+    	     	    	
     	// Draw floor
+    	brush.setColor(Color.black);
     	int[][] xy = getXY(floor.getPoints());
     	brush.fillPolygon(xy[0], xy[1], xy[0].length);
     	
     	// Draw player
+    	brush.setColor(Color.darkGray);
     	xy = getXY(player.getPoints());
     	brush.fillPolygon(xy[0], xy[1], xy[0].length);
     	player.move(floor, m, mapSpeed);
 
     	// On player death, reset player and map
+    	brush.setColor(Color.black);
     	if (!player.isAlive) {
     		player.isAlive = true;
     		player.newCollide = null;
+    		
+    		double moveAmount = width - m.mapArray.get(0).position.x;
     		for (MapElement e : m.mapArray) {
         		Polygon p = (Polygon) e;
-        		p.position.x = width;
+        		p.position.x += moveAmount;
         	}
     	}
 
@@ -110,16 +125,15 @@ class PolygonRush extends Game implements KeyListener {
 		return returnMe;
 	}
 
-	// Main method, creates and starts the game
+	// Main method, creates the game
 	public static void main (String[] args) {
-   		PolygonRush a = new PolygonRush();
-		a.repaint();
+   		new PolygonRush();
 	}
 
 	// On key pressed event (required by keyListener)
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyChar() == KeyEvent.VK_SPACE || e.getKeyChar() == KeyEvent.VK_W || e.getKeyChar() == KeyEvent.VK_UP) {
-			player.jump(floor);
+		if (e.getKeyChar() == KeyEvent.VK_SPACE) {
+			player.jump(true);
 		}
 	}
 	
@@ -130,6 +144,8 @@ class PolygonRush extends Game implements KeyListener {
 
 	// On key released event (required by keyListener)
 	public void keyReleased(KeyEvent e) {
-		
+		if (e.getKeyChar() == KeyEvent.VK_SPACE) {
+			player.jump(false);
+		}
 	}
 }

@@ -6,14 +6,14 @@ import java.util.ArrayList;
 public class Player extends Polygon {
 	// Changeable gravity and jump power
 	private static double gravity = -1;
-	private static double jumpPower = 13;
+	private static double jumpPower = 15;
 	
 	// Initial velocity
 	public double yVel = 0;
 	public double xVel = 0;
 
 	// Is player alive
-	public boolean isAlive = true;
+	private boolean isAlive = true;
 
 	// Can player currently jump
 	private boolean canJump = true;
@@ -22,7 +22,7 @@ public class Player extends Polygon {
 	private boolean isJumping = false;
 	
 	// Last polygon collided (used to check new collisions)
-	public Polygon newCollide;
+	private Polygon newCollide;
 
 	private Color color;
 
@@ -160,5 +160,17 @@ public class Player extends Polygon {
 		}  else {
 			return null;
 		}
+	}
+	
+	public boolean getIsAlive() {
+		return isAlive;
+	}
+	
+	public void setIsAlive(boolean isAlive) {
+		this.isAlive = isAlive;
+	}
+	
+	public void setNewCollide(Polygon newCollide) {
+		this.newCollide = newCollide;
 	}
 }

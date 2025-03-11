@@ -15,10 +15,8 @@ public class Music {
 
 	private void playMusic(String trackFilePath) {
 		try {
-			if (backgroundMusicClip != null) {
-				// Stop any currently playing music
-				stopBackgroundMusic();
-			}
+			// Stop any currently playing music
+			stopBackgroundMusic();
 
 			// Load the audio file and open it into the clip
 			File musicFile = new File(trackFilePath);

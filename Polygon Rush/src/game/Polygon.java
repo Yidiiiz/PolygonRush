@@ -144,7 +144,7 @@ class Polygon {
 	
 	// Getter for position
 	public Point getPosition() {
-		return position.clone();
+		return position;
 	}
 	
 	// Getter for rotation

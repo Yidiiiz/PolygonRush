@@ -17,7 +17,13 @@ public class Map {
 		mapArray.add(e);
 	}
 	
+	// Return current map
 	public ArrayList<MapElement> getMap() {
-		return new ArrayList<MapElement> (mapArray);
+		return mapArray;
+	}
+	
+	// Clear current map
+	public void clearMap() {
+		mapArray.clear();
 	}
 }

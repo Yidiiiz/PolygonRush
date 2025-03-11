@@ -147,6 +147,11 @@ class Polygon {
 		return position;
 	}
 	
+	// Setter for position.x
+	public void setX(int x) {
+		this.position.x = x;
+	}
+	
 	// Getter for rotation
 	public double getRotation() {
 		return rotation;

@@ -1,5 +1,4 @@
 package game;
-
 import java.awt.*;
 
 public class Triangle extends MapElement {

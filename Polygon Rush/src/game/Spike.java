@@ -5,7 +5,6 @@ public class Spike extends MapElement {
 	// Constructor for spike, creates the shape of the spike and initializes the position, rotation, and color
 	public Spike(int size, Point inPosition, int rotation, Color color) {
 		super(getElement(size), inPosition, rotation, true, color);
-		// TODO Auto-generated constructor stub
 	}
 	
 	// Draws the spike shape based off of the size provided

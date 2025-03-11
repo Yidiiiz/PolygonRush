@@ -32,12 +32,14 @@ public class Music {
 		}
 	}
 
+	// Stops currently playing music if any
 	public void stopBackgroundMusic() {
 		if (backgroundMusicClip != null) {
 			backgroundMusicClip.stop();
 		}
 	}
 
+	// Play the music for Level 1
 	public void playLevelOneMusic() {
 		playMusic("resources/music/Level_One.wav");
 	}
@@ -51,7 +53,4 @@ public class Music {
 	public void playLevelThreeMusic() {
 		playMusic("resources/music/Level_Three.wav");
 	}
-
-
-
 }

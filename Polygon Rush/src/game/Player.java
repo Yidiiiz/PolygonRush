@@ -9,8 +9,8 @@ public class Player extends Polygon {
 	private static double jumpPower = 15;
 	
 	// Initial velocity
-	public double yVel = 0;
-	public double xVel = 0;
+	private double yVel = 0;
+	private double xVel = 0;
 
 	// Is player alive
 	private boolean isAlive = true;
@@ -80,6 +80,7 @@ public class Player extends Polygon {
 					Polygon p = (Polygon) e;
 					// If element is collided
 					if (super.collides(p)) {
+						// If player fell from above the element, player is placed on top of it
 						if (e instanceof Triangle) {
 							// Allow the player to land on the triangle, but not die
 							if (this.getPosition().y + yVel <= e.getPosition().y - 30 + gravity) {
@@ -87,26 +88,25 @@ public class Player extends Polygon {
 								yVel = 0;
 								canJump = true; // Allow jumping from the triangle
 							}
-						} else if (super.collides(e)) { // Regular platform (square)
-							// If player fell from above the element, player is placed on top of it
-							if (this.getPosition().y + yVel <= e.getPosition().y - 30 + gravity) {
-								super.getPosition().y = e.getPosition().y - 30 - yVel;
-								canJump = true;
-								// Otherwise, if the player is colliding the block from the side, player dies
-							} else if (this.getPosition().x + 30 < e.getPosition().x + 10) {
-								isAlive = false; // Kill the player
-							}
-						}
-						
-						// If player fell from above the element, player is placed on top of it
-						if (!e.getResetPlayer() && this.getPosition().y + yVel <= p.getPosition().y - 30 + gravity) {
-							super.getPosition().y = p.getPosition().y - 30 - yVel;
-							
+						} else 
+						if (this.getPosition().y + yVel <= e.getPosition().y - 30 + gravity) {
+							super.getPosition().y = e.getPosition().y - 30 - yVel;
+							canJump = true;
 						// Otherwise, if the player is colliding the block from the side, player dies
-						} else if (e.getResetPlayer() || (newCollide != p && this.getPosition().x + 30 <= p.getPosition().x + mapSpeed)) {
-							newCollide = p;
+						} else if (this.getPosition().y + yVel > e.getPosition().y + gravity ||
+									this.getPosition().x + 30 < e.getPosition().x + 10) {
 							isAlive = false;
 						}
+					}
+					
+					// If player fell from above the element, player is placed on top of it
+					if (!e.getResetPlayer() && this.getPosition().y + yVel <= p.getPosition().y - 30 + gravity) {
+						super.getPosition().y = p.getPosition().y - 30 - yVel;
+							
+					// Otherwise, if the player is colliding the block from the side, player dies
+					} else if (e.getResetPlayer() || (newCollide != p && this.getPosition().x + 30 <= p.getPosition().x + mapSpeed)) {
+						newCollide = p;
+						isAlive = false;
 					}
 				}
 				
@@ -118,7 +118,6 @@ public class Player extends Polygon {
 
 			// Since player is inside of something, movement is undone
 			super.getPosition().y += yVel;
-			super.getPosition().x -= xVel;
 
 			// Resets velocity because of collision
 			yVel = 0;
@@ -129,18 +128,22 @@ public class Player extends Polygon {
 			// Resets player rotation
 			super.setRotation(0);
 
-			// If nothing collided
+		// If nothing collided
 		} else {
 			// Increments gravity on velocity
 			yVel += gravity;
 
-			// If player is currently jumping, player rotates at a speed relative to jump
-			// power and gravity
+			// If player is currently jumping, player rotates at a speed relative to jump power and gravity
 			if (!canJump) {
 				super.setRotation(super.getRotation() + 270 / Math.abs((jumpPower) / gravity) / 3);
 			}
 		}
-
+		
+		if (xVel > 0) {
+			xVel -= .25;
+		} else {
+			xVel = 0;
+		}
 	}
 
 	// Gets the map element array list which the player collides with, null if none
@@ -162,15 +165,26 @@ public class Player extends Polygon {
 		}
 	}
 	
+	// Getter for isAlive
 	public boolean getIsAlive() {
 		return isAlive;
 	}
 	
+	// Setter for isAlive
 	public void setIsAlive(boolean isAlive) {
 		this.isAlive = isAlive;
 	}
 	
+	// Setter for newCollide
 	public void setNewCollide(Polygon newCollide) {
 		this.newCollide = newCollide;
+	}
+	
+	// Resets player
+	public void reset() {
+		super.setX(-30);
+		canJump = false;
+		yVel = 0;
+		xVel = 10;
 	}
 }

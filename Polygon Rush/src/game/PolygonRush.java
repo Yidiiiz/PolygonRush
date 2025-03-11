@@ -28,8 +28,7 @@ class PolygonRush extends Game implements KeyListener {
 	private int selectedColorIndex = 0;
 	private Color[] playerColors = { Color.BLACK, Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW };
 
-	// List to store initial positions of obstacles
-	private ArrayList<Point> initialObstaclePositions = new ArrayList<>();
+	// Create an inner class for attempts
 	private AttemptTracker attemptTracker = new AttemptTracker();
 
 	// Constructor for game, creates the game and initializes objects
@@ -57,29 +56,20 @@ class PolygonRush extends Game implements KeyListener {
    		Point floorPosition = new Point(0, height - 100);
 	    floor = new Polygon(floorShape, floorPosition, 0);
    		
-	    // Creates and initializes the map
-//   		for (int i = 0; i < 9; i++) {
-//   			map.addElement(new Platform(30, new Point(width+120*i, height - 100 - 30*(i+1)), 0, Color.black));
-//   		}
-//   		for (int i = 0; i < 24; i++) {
-//   			map.addElement(new Spike(30, new Point(width+30*i, height - 100 - 30), 0, Color.black));
-//   		}
-   		   		
    		// Starts the game (the paint function)
    		repaint();
 	}
 
 	private void addObstacle(MapElement element) {
 		map.addElement(element);
-		initialObstaclePositions.add(new Point(element.getPosition().x, element.getPosition().y));
 	}
 
 	private void showMenu(Graphics brush) {
 		brush.setColor(Color.WHITE);
 		brush.fillRect(0, 0, width, height);
-		brush.setColor(Color.BLACK);
 
 		// Draw menu text
+		brush.setColor(Color.BLACK);
 		brush.setFont(new Font("Arial", Font.BOLD, 30));
 		brush.drawString("Polygon Rush!", (width / 2) - 100, 50);
 		brush.drawString("Its not the usual way ¯\\_( '_' )_/¯", width / 2 - 150, 100);
@@ -101,19 +91,23 @@ class PolygonRush extends Game implements KeyListener {
 			showMenu(brush);
 		} else {
 			// Creating the background of the game
-	    	brush.setColor(Color.white);
+	    	brush.setColor(new Color(50, 20, 20));
 	    	brush.fillRect(0,0,width,height);
 	    	     	    	
 	    	// Draw floor
-	    	brush.setColor(Color.darkGray);
+	    	brush.setColor(Color.lightGray);
 	    	int[][] xy = getXY(floor.getPoints());
 	    	brush.fillPolygon(xy[0], xy[1], xy[0].length);
+	    	brush.setColor(Color.darkGray);
+	    	brush.drawPolygon(xy[0], xy[1], xy[0].length);
 	    	
 	    	// Draw player
 			brush.setColor(player.getColor());
 	    	xy = getXY(player.getPoints());
 	    	brush.fillPolygon(xy[0], xy[1], xy[0].length);
 	    	player.move(floor, map, mapSpeed);
+	    	brush.setColor(Color.darkGray);
+	    	brush.drawPolygon(xy[0], xy[1], xy[0].length);
 
 	    	brush.setColor(Color.black);
 			attemptTracker.drawAttempts(brush);
@@ -135,6 +129,8 @@ class PolygonRush extends Game implements KeyListener {
 	    		// Draws current map element
 	    		if (p.getPosition().x < width || p.getPosition().x + 30 > 0) {
 	    			xy = getXY(p.getPoints());
+		        	brush.setColor(Color.darkGray);
+
 		        	brush.fillPolygon(xy[0], xy[1], xy[0].length);
 	    		}
 	    	}
@@ -191,15 +187,19 @@ class PolygonRush extends Game implements KeyListener {
 	}
 
 	private void loadLevel(int level) {
-		// Clear the current map
-		map.clearMap();
-		Level currentLevel = new Level(level);
-		
-		// Add elements for the new level
-		map.getMap().addAll(currentLevel.getLevelMapElements());
+		if (player != null) {
+			// Clear the current map
+			map.clearMap();
+			Level currentLevel = new Level(level);
+			
+			// Reset player
+			player.reset();
+			
+			// Add elements for the new level
+			map.getMap().addAll(currentLevel.getLevelMapElements());
+		}
 		
 		// Stop any existing music
-		music.stopBackgroundMusic();
 		if (level == 1) {
 			// Play music for level 1
 			music.playLevelOneMusic();

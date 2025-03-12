@@ -5,8 +5,11 @@ public interface Level {
 	public void addObstacle(MapElement element);
 	
 	// Function for resetting the map
-	public void resetMap();
+	public Map resetMap();
 	
 	// Getter for map
 	public Map getMap();
+	
+	// Getter for level number
+	public int getLevelNumber();
 }

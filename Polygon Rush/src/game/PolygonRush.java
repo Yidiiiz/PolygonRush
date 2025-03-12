@@ -13,6 +13,7 @@ class PolygonRush extends Game implements KeyListener {
 	private Player player;
 	private Polygon floor;
 	private Map map;
+	private Level currentLevel;
 
 	// Speed which map scrolls
 	private static int mapSpeed = 5;
@@ -30,6 +31,9 @@ class PolygonRush extends Game implements KeyListener {
 
 	// Create an inner class for attempts
 	private AttemptTracker attemptTracker = new AttemptTracker();
+	
+	// Create an inner class for progress
+	private ProgressTracker progressTracker = new ProgressTracker();
 
 	// Constructor for game, creates the game and initializes objects
 	public PolygonRush() {
@@ -65,24 +69,25 @@ class PolygonRush extends Game implements KeyListener {
 	}
 
 	private void showMenu(Graphics brush) {
-		brush.setColor(Color.WHITE);
-		brush.fillRect(0, 0, width, height);
+        brush.setColor(Color.WHITE);
+        brush.fillRect(0, 0, width, height);
 
-		// Draw menu text
-		brush.setColor(Color.BLACK);
-		brush.setFont(new Font("Arial", Font.BOLD, 30));
-		brush.drawString("Polygon Rush!", (width / 2) - 100, 50);
-		brush.drawString("Its not the usual way ¯\\_( '_' )_/¯", width / 2 - 150, 100);
-		brush.drawString("Press ENTER to Start", width / 2 - 150, 500);
+        // Draw menu text
+        brush.setColor(Color.BLACK);
+        brush.setFont(new Font("Arial", Font.BOLD, 50));
+        brush.drawString("Polygon Rush!", (width / 2) - 200, 50);
+        brush.setFont(new Font("Arial", Font.BOLD, 30));
+        
+        brush.drawString("Press ENTER to Start", width / 2 - 190, 500);
 
-		// Draw color options
-		brush.setColor(playerColors[selectedColorIndex]);
-		brush.fillRect(width / 2 - 50, height / 2 - 30, 100, 100); // Display selected color
-		brush.setColor(Color.BLACK);
-		brush.drawString("Press C to Change Color", width / 2 - 150, height / 2 + 125);
-		brush.drawString("Level: " + selectedLevel, (width / 2) - 75, 175);
-		brush.drawString("Press L to Change Level and Music", width / 2 - 150, 225);
-	}
+        // Draw color options
+        brush.setColor(playerColors[selectedColorIndex]);
+        brush.fillRect(width / 2 - 90, height / 2 - 30, 100, 100); // Display selected color
+        brush.setColor(Color.BLACK);
+        brush.drawString("Press C to Change Color", width / 2 - 210, height / 2 + 125);
+        brush.drawString("Level: " + selectedLevel, (width / 2) - 100, 175);
+        brush.drawString("Press L to Change Level and Music", width / 2 - 275, 225);
+    }
 
 	// Paint method, runs each frame and draws all objects and UI
 	public void paint(Graphics brush) {
@@ -91,7 +96,7 @@ class PolygonRush extends Game implements KeyListener {
 			showMenu(brush);
 		} else {
 			// Creating the background of the game
-	    	brush.setColor(new Color(50, 20, 20));
+	    	brush.setColor(Color.white);
 	    	brush.fillRect(0,0,width,height);
 	    	     	    	
 	    	// Draw floor
@@ -118,6 +123,7 @@ class PolygonRush extends Game implements KeyListener {
 	    		player.setIsAlive(true);
 	    		player.setNewCollide(null);
 	    		attemptTracker.incrementAttempts();
+	    		progressTracker.reset();
 				loadLevel(selectedLevel);
 	    	}
 	    	// Draws all map elements
@@ -134,6 +140,8 @@ class PolygonRush extends Game implements KeyListener {
 		        	brush.fillPolygon(xy[0], xy[1], xy[0].length);
 	    		}
 	    	}
+	    	
+	    	progressTracker.increment();
 		}
 	}
 	
@@ -171,6 +179,48 @@ class PolygonRush extends Game implements KeyListener {
 			brush.drawString("Attempts: " + attempts, 10, 40);
 		}
 	}
+	
+	// Inner class to keep track of Progress
+	class ProgressTracker {
+		// Variables to track progress
+		private int maxProgress;
+		private int currentProgress;
+		
+		// Constructor for ProgressTracker, initializes variables
+		public ProgressTracker() {
+			maxProgress = 0;
+			currentProgress = 0;
+		}
+		
+		// Updates max progress if new greatest max progress
+		private void updateProgress(int progress) {
+			if (progress > maxProgress) {
+				maxProgress = progress;
+			}
+		}
+		
+		// Increments progress (every frame during game)
+		public void increment() {
+			currentProgress += mapSpeed;
+			updateProgress(currentProgress);
+			System.out.println(currentProgress);
+		}
+		
+		// Resets the level
+		public void reset() {
+			currentProgress = 0;
+		}
+		
+		// Getter for current progress
+		public int getProgress() {
+			return currentProgress;
+		}
+		
+		// Getter for max progress
+		public int getMaxProgress() {
+			return maxProgress;
+		}
+	}
 
 	// Function to get both x and y arrays in an array when drawing an element
 	public int[][] getXY(Point[] p) {
@@ -182,101 +232,47 @@ class PolygonRush extends Game implements KeyListener {
 			yPoints[i] = (int) p[i].getY();
 		}
 
-		int[][] returnMe = new int[][] { xPoints, yPoints };
-		return returnMe;
+		return new int[][] { xPoints, yPoints };
 	}
 
 	private void loadLevel(int level) {
-		if (player != null) {
-			// Clear the current map
-			map.clearMap();
-			Level currentLevel = new Level(level);
-			
-			// Reset player
-			player.reset();
-			
-			// Add elements for the new level
-			map.getMap().addAll(currentLevel.getLevelMapElements());
-		}
-		
 		// Stop any existing music
 		if (level == 1) {
 			// Play music for level 1
 			music.playLevelOneMusic();
+			
+			// If new level, then replace currentLevel
+			if (currentLevel == null || currentLevel.getLevelNumber() != level) {
+				currentLevel = (Level) new LevelOne(width, height);
+				map = currentLevel.getMap();
+			}
 		} else if (level == 2) {
 			// Play music for level 2
 			music.playLevelTwoMusic();
+			
+			// If new level, then replace currentLevel
+			if (currentLevel == null || currentLevel.getLevelNumber() != level) {
+				currentLevel = (Level) new LevelTwo(width, height);
+				map = currentLevel.getMap();
+			}
 		} else if (level == 3) {
 			// Play music for level 3
 			music.playLevelThreeMusic();
-		}
-
-	}
-
-	// Inner class for Level
-	public class Level {
-		private int levelNumber;
-		private ArrayList<MapElement> levelMapElements;
-
-		public Level(int levelNumber) {
-			this.levelNumber = levelNumber;
-			levelMapElements = new ArrayList<>();
-			loadLevelElements();
-		}
-
-		// Load level specific map elements
-		private void loadLevelElements() {
-			if (levelNumber == 1) {
-				
-				addObstacle(new Platform(30, new Point(width - 500, height - 100 - 30), 0, Color.black));
-				addObstacle(new Triangle(30, new Point(width - 100, height - 100 - 30), Color.black));
-				addObstacle(new Triangle(30, new Point(width - 125, height - 100 - 30), Color.black));
-				addObstacle(new Platform(30, new Point(width + 200, height - 100 - 75), 0, Color.black));
-				addObstacle(new Triangle(30, new Point(width + 500, height - 100 - 60), Color.black));
-				addObstacle(new Triangle(30, new Point(width + 525, height - 100 - 60), Color.black));
-				addObstacle(new Triangle(30, new Point(width + 550, height - 100 - 60), Color.black));
-				addObstacle(new Platform(30, new Point(width + 600, height - 100 - 30), 0, Color.black));
-				addObstacle(new Platform(30, new Point(width + 600, height - 100 - 60), 0, Color.black));
-				addObstacle(new Platform(30, new Point(width + 600, height - 100 - 90), 0, Color.black));
-				addObstacle(new Triangle(30, new Point(width + 700, height - 100 - 60), Color.black));
-				addObstacle(new Triangle(30, new Point(width + 800, height - 100 - 90), Color.black));
-				addObstacle(new Triangle(30, new Point(width + 900, height - 100 - 120), Color.black));
-				addObstacle(new Platform(30, new Point(width + 1200, height - 100 - 30), 0, Color.black));
-				addObstacle(new Platform(30, new Point(width + 1200, height - 100 - 200), 0, Color.black));
-				addObstacle(new Triangle(30, new Point(width + 1400, height - 100 - 75), Color.black));
-				addObstacle(new Platform(30, new Point(width + 1500, height - 100 - 30), 0, Color.black));
-				addObstacle(new Platform(30, new Point(width + 1500, height - 100 - 60), 0, Color.black));
-				addObstacle(new Platform(30, new Point(width + 1500, height - 100 - 90), 0, Color.black));
-				addObstacle(new Platform(30, new Point(width + 1500, height - 100 - 120), 0, Color.black));
-				addObstacle(new Platform(30, new Point(width + 1500, height - 100 - 150), 0, Color.black));
-				addObstacle(new Platform(30, new Point(width + 2000, height - 100 - 30), 0, Color.black));
-			} else if (levelNumber == 2) {
-				
-				addObstacle(new Platform(30, new Point(width, height - 100 - 30), 0, Color.black));
-				addObstacle(new Platform(30, new Point(width + 200, height - 100 - 75), 0, Color.black));
-				addObstacle(new Platform(30, new Point(width + 600, height - 100 - 30), 0, Color.black));
-				addObstacle(new Platform(30, new Point(width + 600, height - 100 - 60), 0, Color.black));
-				addObstacle(new Platform(30, new Point(width + 600, height - 100 - 90), 0, Color.black));
-				addObstacle(new Platform(30, new Point(width + 1200, height - 100 - 30), 0, Color.black));
-				addObstacle(new Platform(30, new Point(width + 1200, height - 100 - 200), 0, Color.black));
-			} else if (levelNumber == 3) {
-				
-				addObstacle(new Triangle(30, new Point(width + 500, height - 100 - 60), Color.black));
-				addObstacle(new Triangle(30, new Point(width + 525, height - 100 - 60), Color.black));
-				addObstacle(new Triangle(30, new Point(width + 550, height - 100 - 60), Color.black));
-				addObstacle(new Triangle(30, new Point(width + 700, height - 100 - 60), Color.black));
-				addObstacle(new Triangle(30, new Point(width + 800, height - 100 - 90), Color.black));
-				addObstacle(new Triangle(30, new Point(width + 900, height - 100 - 120), Color.black));
+			
+			// If new level, then replace currentLevel
+			if (currentLevel == null || currentLevel.getLevelNumber() != level) {
+				currentLevel = (Level) new LevelThree(width, height);
+				map = currentLevel.getMap();
 			}
-
 		}
-
-		public ArrayList<MapElement> getLevelMapElements() {
-			return levelMapElements;
-		}
-
-		public int getLevelNumber() {
-			return levelNumber;
+		
+		// If player exists
+		if (player != null) {
+			// Reset the current map
+			map = currentLevel.resetMap();
+			
+			// Reset player
+			player.reset();
 		}
 	}
 
@@ -315,6 +311,10 @@ class PolygonRush extends Game implements KeyListener {
 					}
 				};
 				jumpStart.run();
+			} 
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				isInMenu = true;
+				loadLevel(selectedLevel);
 			}
 		}
 	}

@@ -6,7 +6,7 @@ public class LevelTwo implements Level {
 	private Map map;
 	private int width;
 	private int height;
-	private int winPoint = 4000;
+	private int finish = 4000;
 	
 	public LevelTwo(int width, int height) {
 		map = new Map();
@@ -139,5 +139,10 @@ public class LevelTwo implements Level {
 	// Getter for level number
 	public int getLevelNumber() {
 		return levelNumber;
+	}
+	
+	// Getter for finish marker
+	public int getFinish() {
+		return finish;
 	}
 }

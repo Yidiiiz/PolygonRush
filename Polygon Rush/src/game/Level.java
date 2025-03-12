@@ -12,4 +12,7 @@ public interface Level {
 	
 	// Getter for level number
 	public int getLevelNumber();
+	
+	// Getter for finish marker
+	public int getFinish();
 }

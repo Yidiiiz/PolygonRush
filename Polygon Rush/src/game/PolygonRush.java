@@ -1,8 +1,6 @@
 package game;
-
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 
 // Main class, runs the game
 class PolygonRush extends Game implements KeyListener {
@@ -64,10 +62,6 @@ class PolygonRush extends Game implements KeyListener {
    		repaint();
 	}
 
-	private void addObstacle(MapElement element) {
-		map.addElement(element);
-	}
-
 	private void showMenu(Graphics brush) {
         brush.setColor(Color.WHITE);
         brush.fillRect(0, 0, width, height);
@@ -116,6 +110,7 @@ class PolygonRush extends Game implements KeyListener {
 
 	    	brush.setColor(Color.black);
 			attemptTracker.drawAttempts(brush);
+			progressTracker.drawProgress(brush);
 			
 
 	    	// On player death, reset player and map
@@ -161,21 +156,25 @@ class PolygonRush extends Game implements KeyListener {
 	class AttemptTracker {
 		private int attempts;
 
+		// Constructor for AttemptTracker, initialize attempts
 		public AttemptTracker() {
 			this.attempts = 1;
 		}
 
+		// Increment attempts
 		public void incrementAttempts() {
 			attempts++;
 		}
 
+		// Getter for attempts
 		public int getAttempts() {
 			return attempts;
 		}
-
+		
+		// Text for total Attempts (current)
 		public void drawAttempts(Graphics brush) {
 			brush.setColor(Color.BLACK);
-			brush.setFont(new Font("Arial", Font.BOLD, 50));
+			brush.setFont(new Font("ComicSans", Font.BOLD, 20));
 			brush.drawString("Attempts: " + attempts, 10, 40);
 		}
 	}
@@ -219,6 +218,13 @@ class PolygonRush extends Game implements KeyListener {
 		// Getter for max progress
 		public int getMaxProgress() {
 			return maxProgress;
+		}
+		
+		// Text for total progress (current)
+		public void drawProgress(Graphics brush) {
+			brush.setColor(Color.BLACK);
+			brush.setFont(new Font("ComicSans", Font.BOLD, 20));
+			brush.drawString((int) s((double) currentProgress/(double) currentLevel.getFinish()*100) + "%", width-50, 40);
 		}
 	}
 

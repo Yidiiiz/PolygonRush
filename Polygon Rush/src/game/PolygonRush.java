@@ -224,7 +224,7 @@ class PolygonRush extends Game implements KeyListener {
 		public void drawProgress(Graphics brush) {
 			brush.setColor(Color.BLACK);
 			brush.setFont(new Font("ComicSans", Font.BOLD, 20));
-			brush.drawString((int) s((double) currentProgress/(double) currentLevel.getFinish()*100) + "%", width-50, 40);
+			brush.drawString((int) ((double) currentProgress/(double) currentLevel.getFinish()*100) + "%", width-50, 40);
 		}
 	}
 

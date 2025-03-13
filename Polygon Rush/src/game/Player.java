@@ -74,32 +74,20 @@ public class Player extends Polygon {
 		// If player collides with floor or map
 		if (super.collides(floor) || collisions != null) {
 				
-			// If player is colliding the floor
+			// If player is colliding the map
 			if (collisions != null) {
 				for (MapElement e : collisions) {
 					Polygon p = (Polygon) e;
-					// If element is collided
-					if (super.collides(p)) {
-						// If player fell from above the element, player is placed on top of it
-						if (this.getPosition().y + yVel <= e.getPosition().y - 30 + gravity) {
-							super.getPosition().y = e.getPosition().y - 30 - yVel;
-							canJump = true;
-						// Otherwise, if the player is colliding the block from the side, player dies
-						} else if (this.getPosition().y + yVel > e.getPosition().y + gravity ||
-									this.getPosition().x + 30 < e.getPosition().x + 10) {
-							isAlive = false;
-						}
-					}
 					
-					// If player fell from above the element, player is placed on top of it
-					if (!e.getResetPlayer() && this.getPosition().y + yVel <= p.getPosition().y - 30 + gravity) {
-						super.getPosition().y = p.getPosition().y - 30 - yVel;
-							
-					// Otherwise, if the player is colliding the block from the side, player dies
-					} else if (e.getResetPlayer() || (newCollide != p && this.getPosition().x + 30 <= p.getPosition().x + mapSpeed)) {
-						newCollide = p;
+					// If the player is colliding the block from the side, player dies
+					if (e.getResetPlayer() || (newCollide != p && this.getPosition().x + 30 <= p.getPosition().x)) {
 						isAlive = false;
+						
+					// If player fell from above the element, player is placed on top of it
+					} else if (newCollide == p || this.getPosition().y + yVel + 30 <= p.getPosition().y + gravity) {
+						super.getPosition().y = p.getPosition().y - 30 - yVel;
 					}
+					newCollide = p;
 				}
 				
 			// If player is colliding the floor
@@ -130,24 +118,32 @@ public class Player extends Polygon {
 				super.setRotation(super.getRotation() + 270 / Math.abs((jumpPower) / gravity) / 3);
 			}
 		}
+		
+		// Slow down animation at start
 		if (xVel > 0) {
 			xVel -= .25;
 		} else {
 			xVel = 0;
 		}
+		
+		// If near end, jump
 		if (Math.abs(getPosition().x - (end.getPosition().x - 500)) < 10) {
 			jump();
 		}
+		
+		// If near end, spin and move upwards
 		if (getPosition().x >= end.getPosition().x - 470) {
 			yVel = (Math.abs(end.getPosition().x - getPosition().x)/400)*2;
     		super.setRotation(-Math.abs(end.getPosition().x - getPosition().x)*2);
 		}
 		
+		// if near end, move right
 		if (end.getPosition().x <= width) {
-    		if (mapSpeed > 0 && end.getPosition().x % 200 == 0) {
-    			xVel = 3 + Math.abs(end.getPosition().x - getPosition().x)/100;
+    		if (end.getPosition().x % 5 == 0) {
+    			xVel += 1.3;
     		}
     	}
+
 	}
 
 	// Gets the map element array list which the player collides with, null if none

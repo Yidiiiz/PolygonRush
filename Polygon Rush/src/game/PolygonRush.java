@@ -65,6 +65,7 @@ class PolygonRush extends Game implements KeyListener {
    		repaint();
 	}
 
+	// Function to draw menu
 	private void showMenu(Graphics brush) {
         brush.setColor(Color.WHITE);
         brush.fillRect(0, 0, width, height);
@@ -86,6 +87,7 @@ class PolygonRush extends Game implements KeyListener {
         brush.drawString("Press L to Change Level and Music", width / 2 - 275, 225);
     }
 	
+	// Function to draw win text
 	private void gameWon(Graphics brush) {
 //        brush.setColor(Color.WHITE);
 //        brush.fillRect(0, 0, width, height);
@@ -152,7 +154,6 @@ class PolygonRush extends Game implements KeyListener {
 				attemptTracker.drawAttempts(brush);
 				progressTracker.drawProgress(brush);
 	    	}
-			
 
 	    	// On player death, reset player and map
 	    	if (!player.getIsAlive()) {
@@ -257,7 +258,6 @@ class PolygonRush extends Game implements KeyListener {
 		public void increment() {
 			currentProgress += mapSpeed;
 			updateProgress(currentProgress);
-			System.out.println(currentProgress);
 		}
 		
 		// Resets the level

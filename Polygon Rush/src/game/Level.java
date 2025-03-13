@@ -1,5 +1,6 @@
 package game;
 
+// Interface for Levels
 public interface Level {
 	// Function for adding an obstacle
 	public void addObstacle(MapElement element);

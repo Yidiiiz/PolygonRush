@@ -6,7 +6,7 @@ public class LevelThree implements Level {
 	private Map map;
 	private int width;
 	private int height;
-	private int finish = 4000;
+	private int finish = 2000;
 	
 	public LevelThree(int width, int height) {
 		map = new Map();
@@ -22,12 +22,12 @@ public class LevelThree implements Level {
 	// Resets Map to original state and returns
 	public Map resetMap() {
 		map = new Map();
-		addObstacle(new Triangle(30, new Point(width + 500, height - 100 - 60), Color.black));
-		addObstacle(new Triangle(30, new Point(width + 525, height - 100 - 60), Color.black));
-		addObstacle(new Triangle(30, new Point(width + 550, height - 100 - 60), Color.black));
-		addObstacle(new Triangle(30, new Point(width + 700, height - 100 - 60), Color.black));
-		addObstacle(new Triangle(30, new Point(width + 800, height - 100 - 90), Color.black));
-		addObstacle(new Triangle(30, new Point(width + 900, height - 100 - 120), Color.black));
+//		addObstacle(new Triangle(30, new Point(width + 500, height - 100 - 60), Color.black));
+//		addObstacle(new Triangle(30, new Point(width + 525, height - 100 - 60), Color.black));
+//		addObstacle(new Triangle(30, new Point(width + 550, height - 100 - 60), Color.black));
+//		addObstacle(new Triangle(30, new Point(width + 700, height - 100 - 60), Color.black));
+//		addObstacle(new Triangle(30, new Point(width + 800, height - 100 - 90), Color.black));
+//		addObstacle(new Triangle(30, new Point(width + 900, height - 100 - 120), Color.black));
 		
 		return map;
 	}

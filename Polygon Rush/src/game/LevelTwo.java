@@ -6,7 +6,7 @@ public class LevelTwo implements Level {
 	private Map map;
 	private int width;
 	private int height;
-	private int finish = 4000;
+	private int finish = 5000;
 	
 	public LevelTwo(int width, int height) {
 		map = new Map();

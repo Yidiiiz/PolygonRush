@@ -152,6 +152,11 @@ class Polygon {
 		this.position.x = x;
 	}
 	
+	// Setter for position.y
+	public void setY(int y) {
+		this.position.y = y;
+	}
+	
 	// Getter for rotation
 	public double getRotation() {
 		return rotation;

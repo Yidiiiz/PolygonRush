@@ -10,6 +10,7 @@ class PolygonRush extends Game implements KeyListener {
 	// Variables for player, floor, and map
 	private Player player;
 	private Polygon floor;
+	private Polygon end;
 	private Map map;
 	private Level currentLevel;
 
@@ -22,6 +23,8 @@ class PolygonRush extends Game implements KeyListener {
 
 	// Is currently in menu or not
 	private boolean isInMenu = true;
+	// Is game won or not
+	private boolean gameWon = false;
 	
 	// Color array and index
 	private int selectedColorIndex = 0;
@@ -82,45 +85,86 @@ class PolygonRush extends Game implements KeyListener {
         brush.drawString("Level: " + selectedLevel, (width / 2) - 100, 175);
         brush.drawString("Press L to Change Level and Music", width / 2 - 275, 225);
     }
+	
+	private void gameWon(Graphics brush) {
+//        brush.setColor(Color.WHITE);
+//        brush.fillRect(0, 0, width, height);
+
+        // Draw menu text
+        brush.setColor(Color.lightGray);
+        brush.setFont(new Font("Arial", Font.BOLD, 50));
+        brush.drawString("You Won!", (width / 2) + 50, 100);
+        brush.setFont(new Font("Arial", Font.BOLD, 30));
+        
+        brush.drawString("You won in only " + attemptTracker.getAttempts() + " attempts!", width / 2 + 50, 400);
+        brush.drawString("Press any key to go back to menu", width / 2 + 50, 450);
+    }
 
 	// Paint method, runs each frame and draws all objects and UI
 	public void paint(Graphics brush) {
 		// Show the menu
 		if (isInMenu) {
 			showMenu(brush);
+		} else if (gameWon) {
+			gameWon(brush);
 		} else {
 			// Creating the background of the game
 	    	brush.setColor(Color.white);
 	    	brush.fillRect(0,0,width,height);
-	    	     	    	
-	    	// Draw floor
-	    	brush.setColor(Color.lightGray);
-	    	int[][] xy = getXY(floor.getPoints());
-	    	brush.fillPolygon(xy[0], xy[1], xy[0].length);
-	    	brush.setColor(Color.darkGray);
-	    	brush.drawPolygon(xy[0], xy[1], xy[0].length);
+	    	int[][] xy;
+	    	
+	    	// Check if player won
+	    	if (progressTracker.getProgress() >= currentLevel.getFinish()) {
+	    		player.setIsAlive(true);
+	    		player.setNewCollide(null);
+	    		player.getPosition().x += 15;
+	    		
+	    		gameWon = true;
+	    	}
 	    	
 	    	// Draw player
 			brush.setColor(player.getColor());
 	    	xy = getXY(player.getPoints());
 	    	brush.fillPolygon(xy[0], xy[1], xy[0].length);
-	    	player.move(floor, map, mapSpeed);
+	    	player.move(floor, map, mapSpeed, end, width, height);
+	    	
+	    	brush.setColor(Color.darkGray);
+	    	brush.drawPolygon(xy[0], xy[1], xy[0].length);
+	    		    	
+	    	// Draw end
+	    	end.getPosition().x -= mapSpeed;
+	    	if (end.getPosition().x < width) {
+		    	brush.setColor(Color.darkGray);
+	    		xy = getXY(end.getPoints());
+	        	brush.fillPolygon(xy[0], xy[1], xy[0].length);
+	    	}
+	    	     	    	
+	    	// Draw floor
+	    	brush.setColor(Color.lightGray);
+	    	xy = getXY(floor.getPoints());
+	    	brush.fillPolygon(xy[0], xy[1], xy[0].length);
 	    	brush.setColor(Color.darkGray);
 	    	brush.drawPolygon(xy[0], xy[1], xy[0].length);
 
-	    	brush.setColor(Color.black);
-			attemptTracker.drawAttempts(brush);
-			progressTracker.drawProgress(brush);
+	    	// Draw text for attempts and progress
+	    	if (!gameWon) {
+	    		brush.setColor(Color.black);
+				attemptTracker.drawAttempts(brush);
+				progressTracker.drawProgress(brush);
+	    	}
 			
 
 	    	// On player death, reset player and map
 	    	if (!player.getIsAlive()) {
 	    		player.setIsAlive(true);
 	    		player.setNewCollide(null);
+	    		
 	    		attemptTracker.incrementAttempts();
 	    		progressTracker.reset();
+	    		
 				loadLevel(selectedLevel);
 	    	}
+	    	
 	    	// Draws all map elements
 	    	brush.setColor(Color.darkGray);
 	    	for (MapElement e : map.getMap()) {
@@ -129,14 +173,20 @@ class PolygonRush extends Game implements KeyListener {
 	    		
 	    		// Draws current map element
 	    		if (p.getPosition().x < width || p.getPosition().x + 30 > 0) {
-	    			xy = getXY(p.getPoints());
 		        	brush.setColor(Color.darkGray);
-
+	    			xy = getXY(p.getPoints());
 		        	brush.fillPolygon(xy[0], xy[1], xy[0].length);
 	    		}
 	    	}
 	    	
+	    	// Increment progress
 	    	progressTracker.increment();
+	    	
+	    	if (end.getPosition().x <= width) {
+	    		if (mapSpeed > 0 && end.getPosition().x % 100 == 0) {
+	    			mapSpeed -= 1;
+	    		}
+	    	}
 		}
 	}
 	
@@ -175,7 +225,12 @@ class PolygonRush extends Game implements KeyListener {
 		public void drawAttempts(Graphics brush) {
 			brush.setColor(Color.BLACK);
 			brush.setFont(new Font("ComicSans", Font.BOLD, 20));
-			brush.drawString("Attempts: " + attempts, 10, 40);
+			brush.drawString("Attempts: " + attempts, 20, 30);
+		}
+		
+		// Reset total attempts
+		public void resetAttempts() {
+			attempts = 1;
 		}
 	}
 	
@@ -224,7 +279,7 @@ class PolygonRush extends Game implements KeyListener {
 		public void drawProgress(Graphics brush) {
 			brush.setColor(Color.BLACK);
 			brush.setFont(new Font("ComicSans", Font.BOLD, 20));
-			brush.drawString((int) ((double) currentProgress/(double) currentLevel.getFinish()*100) + "%", width-50, 40);
+			brush.drawString((int) ((double) currentProgress/(double) currentLevel.getFinish()*100) + "%", width-80, 30);
 		}
 	}
 
@@ -276,6 +331,15 @@ class PolygonRush extends Game implements KeyListener {
 		if (player != null) {
 			// Reset the current map
 			map = currentLevel.resetMap();
+			mapSpeed = 5;
+			
+			// Reset player y
+			player.getPosition().y = height-100;
+		    
+		    // Creates and initializes the end
+	   		Point[] endShape = new Point[] { new Point(0, 0), new Point(0, height), new Point(width, height), new Point(width, 0) };
+	   		Point endPosition = new Point(currentLevel.getFinish() + 600, 0);
+		    end = new Polygon(endShape, endPosition, 0);
 			
 			// Reset player
 			player.reset();
@@ -322,6 +386,12 @@ class PolygonRush extends Game implements KeyListener {
 				isInMenu = true;
 				loadLevel(selectedLevel);
 			}
+		}
+		if (gameWon) {
+			isInMenu = true;
+			gameWon = false;
+			attemptTracker.resetAttempts();
+    		progressTracker.reset();
 		}
 	}
 

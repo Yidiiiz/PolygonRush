@@ -57,7 +57,7 @@ public class Player extends Polygon {
 	}
 
 	// Move function for player, including collision and jump logic
-	public void move(Polygon floor, Map m, int mapSpeed) {		
+	public void move(Polygon floor, Map m, int mapSpeed, Polygon end, int width, int height) {		
 		// If jump key is down, toggle player jump
 		if (isJumping && canJump) {
 			yVel = jumpPower;
@@ -81,14 +81,6 @@ public class Player extends Polygon {
 					// If element is collided
 					if (super.collides(p)) {
 						// If player fell from above the element, player is placed on top of it
-						if (e instanceof Triangle) {
-							// Allow the player to land on the triangle, but not die
-							if (this.getPosition().y + yVel <= e.getPosition().y - 30 + gravity) {
-								super.getPosition().y = e.getPosition().y - 30 - yVel;
-								yVel = 0;
-								canJump = true; // Allow jumping from the triangle
-							}
-						} else 
 						if (this.getPosition().y + yVel <= e.getPosition().y - 30 + gravity) {
 							super.getPosition().y = e.getPosition().y - 30 - yVel;
 							canJump = true;
@@ -138,12 +130,24 @@ public class Player extends Polygon {
 				super.setRotation(super.getRotation() + 270 / Math.abs((jumpPower) / gravity) / 3);
 			}
 		}
-		
 		if (xVel > 0) {
 			xVel -= .25;
 		} else {
 			xVel = 0;
 		}
+		if (Math.abs(getPosition().x - (end.getPosition().x - 500)) < 10) {
+			jump();
+		}
+		if (getPosition().x >= end.getPosition().x - 470) {
+			yVel = (Math.abs(end.getPosition().x - getPosition().x)/400)*2;
+    		super.setRotation(-Math.abs(end.getPosition().x - getPosition().x)*2);
+		}
+		
+		if (end.getPosition().x <= width) {
+    		if (mapSpeed > 0 && end.getPosition().x % 200 == 0) {
+    			xVel = 3 + Math.abs(end.getPosition().x - getPosition().x)/100;
+    		}
+    	}
 	}
 
 	// Gets the map element array list which the player collides with, null if none

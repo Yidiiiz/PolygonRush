@@ -80,7 +80,7 @@ public class Player extends Polygon {
 					Polygon p = (Polygon) e;
 					
 					// If the player is colliding the block from the side, player dies
-					if (e.getResetPlayer() || (newCollide != p && this.getPosition().x + 30 <= p.getPosition().x)) {
+					if (e.getResetPlayer() || (newCollide != p && this.getPosition().x + 30 <= p.getPosition().x + mapSpeed)) {
 						isAlive = false;
 						
 					// If player fell from above the element, player is placed on top of it
